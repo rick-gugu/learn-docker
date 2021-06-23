@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  drone-server:
+    container_name: drone_server
+    image: drone/drone:1
+    ports:
+      - 8080:80
+    volumes:
+      - /var/lib/drone:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    environment:
+      - DRONE_GITHUB_SERVER=https://github.com
+      - DRONE_GITHUB_CLIENT_ID=04f7fd596502b9eee888
+      - DRONE_GITHUB_CLIENT_SECRET=06e12b4aefa434f9a5e563691b70e91683994c00
+      - DRONE_AGENTS_ENABLED=true
+      - DRONE_RPC_SECRET=gugufdrone
+      - DRONE_SERVER_HOST=rick.cloud:50001
+      - DRONE_SERVER_PROTO=http
+      - DRONE_TLS_AUTOCERT=true
+      - DRONE_USER_CREATE=rick-gugu:octocat,admin:true
+      - DRONE_LOGS_TRACE=true
+      - DRONE_LOGS_PRETTY=true
+      - DRONE_LOGS_COLOR=true
+
+  drone-agent:
+    container_name: drone_agent
+    image: drone/agent:1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    environment:
+      - DRONE_RPC_HOST=drone-server
+      - DRONE_RPC_SECRET=gugufdrone
+      - DRONE_RUNNER_CAPACITY=1
+      - DRONE_RUNNER_NAME=mainrunner
+      - DRONE_LOGS_TRACE=true
+      - DRONE_LOGS_PRETTY=true
+      - DRONE_LOGS_COLOR=true
